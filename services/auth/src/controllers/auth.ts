@@ -1,11 +1,9 @@
-import { Request , Response } from "express"
 import User from "../model/user.js";
 import  jwt  from "jsonwebtoken";
+import TryCatch from "../middlewares/tryCatch.js";
 
-export const loginUser = async(req:Request , res:Response) =>{
-    try {
-        
-        const {email , name , picture} = req.body
+export const loginUser = TryCatch(async(req , res)=>{
+    const {email , name , picture} = req.body
 
         let user = await User.findOne({email}) 
 
@@ -26,10 +24,4 @@ export const loginUser = async(req:Request , res:Response) =>{
         token ,
         user,
        });
-
-    } catch (error:any) {
-        res.status(500).json({
-            message: error.message ,
-        })
-    }
-} ;
+})
