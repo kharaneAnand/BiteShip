@@ -13,7 +13,7 @@ export const loginUser = TryCatch(async(req , res)=>{
 
     if(!code){
         return res.status(400).json({
-            message:"Authorization Code is Required" ;
+            message:"Authorization Code is Required" ,
         });
     }
 
