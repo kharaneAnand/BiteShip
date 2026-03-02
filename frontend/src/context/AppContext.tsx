@@ -35,7 +35,7 @@ export const AppProvider = ({children}: AppProviderProps)=>{
         }finally{
             setLoading(false) ;
         }
-    }
+    }   
 
     useEffect(()=>{
         fetchUser();
