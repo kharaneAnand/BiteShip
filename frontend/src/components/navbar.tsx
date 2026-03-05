@@ -7,7 +7,7 @@ import { BiMapPin, BiSearch } from "react-icons/bi";
 
 const Navbar = () => {
 
-    const {isAuth} = useAppData() ;
+    const {isAuth , city  } = useAppData() ;
     const currentLocation = useLocation() ;
 
     const isHomePage = currentLocation.pathname === '/' 
@@ -84,7 +84,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2 px-4 border-r border-gray-200 text-gray-800">
             <BiMapPin className="h-4 w-4 text-[#3B82F6]" />
             <span className="text-sm truncate max-w-35 font-medium">
-              City
+              {city}
             </span>
           </div>
 
