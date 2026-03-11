@@ -5,7 +5,7 @@ import TryCatch from "../middlewares/tryCatch.js";
 import Restaurant from "../models/Restaurant.js";
 import jwt from 'jsonwebtoken'
 
-export const addRestraunt = TryCatch(async(req:AuthenticatedRequest , res)=>{
+export const addRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=>{
     const user = req.user ;
 
     if(!user){
@@ -84,7 +84,7 @@ export const fetchMyRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=
 
       if(!restaurant){
          return res.status(400).json({
-            message:"Invalid user" ,
+            message:"No Restarurant found" ,
          });
       }
 

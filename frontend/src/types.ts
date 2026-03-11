@@ -24,3 +24,21 @@ export interface AppContextType{
     city : string ;
 
 }
+
+export interface IRestaurant{
+    _id : string ;
+    name : string ;
+    description?:string ;
+    image : string ;
+    ownerId : string ;
+    phone:number ;
+    isVerified:boolean ;
+
+    autoLocation:{
+        type : "Point" ,
+        coordinates : [number , number] ; // [logitude , latitude] 
+        formattedAddress : string ;
+    };
+    isOpen : boolean ;
+    createdAt : boolean ;
+}
