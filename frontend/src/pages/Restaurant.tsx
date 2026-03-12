@@ -13,9 +13,9 @@ const Restaurant = () => {
     try {
       
       const {data} = await axios.get(`${restaurantService}/api/restaurant/my` , {
-        headers:{
-          Authorazation :`Bearer${localStorage.getItem("token")}` ,
-        },
+          headers:{
+             Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
       }) ;
 
 

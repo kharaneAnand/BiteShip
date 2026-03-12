@@ -17,9 +17,11 @@ export interface AuthenticatedRequest extends Request {
 
 export const isAuth = async(req:AuthenticatedRequest , res:Response , next:NextFunction):Promise<void> =>{
     try {
+
+        
         const authHeader = req.headers.authorization ;
 
-        if(!authHeader || !authHeader.startsWith("Bearer")){
+        if(!authHeader || !authHeader.startsWith("Bearer ")){
             res.status(401).json({
                 message:"please Login - No auth Header", 
             }) ;
@@ -45,7 +47,7 @@ export const isAuth = async(req:AuthenticatedRequest , res:Response , next:NextF
         }
 
 
-        req.user = decodedValue.user ;
+       req.user = decodedValue.user as IUser;
         next() ;
     } catch (error) {
          res.status(500).json({

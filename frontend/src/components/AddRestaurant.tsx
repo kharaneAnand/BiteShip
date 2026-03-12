@@ -40,7 +40,7 @@ const AddRestaurant = () => {
             setSubmitting(true) ;
             await axios.post(`${restaurantService}/api/restaurant/new` , formData , {
                 headers:{
-                    Authorization:`Bearer${localStorage.getItem("token")}` ,
+                    Authorization:`Bearer ${localStorage.getItem("token")}` ,
                 },
             });
 

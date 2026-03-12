@@ -19,10 +19,10 @@ export const addRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=>{
      }) ;
 
      if(existingRestaurant){
-        return ({
-            message : "You already have a Restaurant",
-        }) ;
-     }
+         return res.status(400).json({
+         message : "You already have a Restaurant",
+         });
+      }
 
      const {name , description , latitude , longitude ,formattedAddress , phone } = req.body 
 
@@ -56,13 +56,14 @@ export const addRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=>{
         name , 
         description ,
         phone ,
-        image: uploadResult ,
+        image: uploadResult.url ,
         ownerId : user._id ,
         autoLocation:{
             type:"Point",
             coordinates:[Number(longitude) , Number(latitude)] ,
             formattedAddress,
         },
+        isVerified:false ,
      });
 
      return res.status(200).json({
@@ -83,9 +84,9 @@ export const fetchMyRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=
       const restaurant = await Restaurant.findOne({ownerId:req.user._id}) ;
 
       if(!restaurant){
-         return res.status(400).json({
-            message:"No Restarurant found" ,
-         });
+         return res.json({
+         restaurant: null
+         })
       }
 
       if(!req.user.restaurantId){
