@@ -47,10 +47,10 @@ const RestaurantProfile = ({restaurant , isSeller , onUpdate}:props) => {
                     Authorization :`Bearer ${localStorage.getItem("token")}` ,
                 },
             });
-
-
+           
+            toast.success("Restaurant Updated") ;
             onUpdate(data.restaurant);
-            toast.success(data.message) ;
+            setEditMode(false) ;
         } catch (error) {
             console.log(error) ;
             toast.error("Failed to Update ") ;

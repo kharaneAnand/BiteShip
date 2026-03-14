@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useRef, type ReactNode 
 import { authService } from "../main";
 import { type AppContextType ,type LocationData,type User } from "../types";
 import axios from "axios";
+import { Toaster } from "react-hot-toast";
 
 const AppContext = createContext<AppContextType | undefined>(undefined) 
 
@@ -112,6 +113,7 @@ export const AppProvider = ({children}: AppProviderProps)=>{
      }}
     >
     {children}
+    <Toaster />
     </AppContext.Provider>
     );
 };
