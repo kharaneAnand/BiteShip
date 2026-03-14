@@ -40,5 +40,5 @@ export interface IRestaurant{
         formattedAddress : string ;
     };
     isOpen : boolean ;
-    createdAt : boolean ;
+    createdAt : string ;
 }
