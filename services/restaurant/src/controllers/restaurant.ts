@@ -96,7 +96,7 @@ export const fetchMyRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=
                restaurantId : restaurant._id 
             },
          }, process.env.JWT_SEC as string , {
-            expiresIn:"15",
+            expiresIn:"15d",
          });
 
 
