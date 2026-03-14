@@ -48,7 +48,7 @@ const RestaurantProfile = ({restaurant , isSeller , onUpdate}:props) => {
                 },
             });
            
-            toast.success("Restaurant Updated") ;
+            toast.success(data.message) ;
             onUpdate(data.restaurant);
             setEditMode(false) ;
         } catch (error) {
