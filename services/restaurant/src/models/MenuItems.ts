@@ -37,7 +37,7 @@ const schema = new Schema<IMenuItem>({
 
     isAvailabe:{
         type:Boolean ,
-        required : true ,
+        default:true ,
     } ,
 },
 {   

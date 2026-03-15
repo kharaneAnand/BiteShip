@@ -54,7 +54,7 @@ export const addMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
     description ,
     price ,
     restaurantId :restaurant._id,
-    image : uploadResult.url
+    image : uploadResult.url,
    })
 
    res.json({
