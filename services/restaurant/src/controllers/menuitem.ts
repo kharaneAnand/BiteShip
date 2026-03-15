@@ -76,3 +76,86 @@ export const getAllItems = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
     res.json(items) ;
 });
+
+export const deleteMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
+    if(!req.user){
+        return res.status(401).json({
+            message : "Please Login" ,
+        });
+    }
+
+    const {itemId} = req.params ;
+    if(!itemId){
+        return res.status(400).json({
+            message : "Id is required" ,
+        });
+    }
+
+    const item = await MenuItems.findById(itemId) ;
+
+    if(!item){
+        return res.status(404).json({
+            message : "No item found",
+        });
+    }
+
+    const restaurant = await Restaurant.findOne({
+        _id:item.restaurantId ,
+        ownerId:req.user._id ,
+    });
+
+    if(!restaurant){
+        return res.status(404).json({
+            message:"No restaurant found ",
+        });
+    }
+
+    await item.deleteOne() 
+
+    res.json({
+        message : "Menu item deleted successfully" ,
+    });
+
+});
+
+export const toggleMenuItemAvailability = TryCatch(async(req:AuthenticatedRequest , res)=>{
+    if(!req.user){
+        return res.status(401).json({
+            message : "Please Login" ,
+        });
+    }
+
+    const {itemId} = req.params ;
+    if(!itemId){
+        return res.status(400).json({
+            message:"Id is Required" ,
+        });
+    }
+
+    const item = await MenuItems.findById(itemId) ;
+    if(!item){
+        return res.status(400).json({
+            message : "Item is not available" ,
+        });
+    }
+
+    const restaurant = await Restaurant.findById({
+        _id : item.restaurantId ,
+        ownerId : req.user._id ,
+    });
+
+    if(!restaurant){
+        return res.status(404).json({
+            message : "No restaurant found " ,
+        });
+    }
+
+    item.isAvailabe = !item.isAvailabe ;
+    await item.save() ;
+
+    res.json({
+        message : `Item marked as ${item.isAvailabe ? "available" : "unavailable"}` ,
+        item,
+    });
+});
+
