@@ -6,7 +6,7 @@ export interface IMenuItem extends Document{
     description:string;
     image?:string ;
     price:number;
-    isAvailabe:boolean;
+    isAvailable:boolean;
     createdAt:Date;
     updatedAt:Date;
 }
@@ -35,10 +35,14 @@ const schema = new Schema<IMenuItem>({
         required:true ,
     },
 
-    isAvailabe:{
+    isAvailable:{
         type:Boolean ,
         default:true ,
     } ,
+    price:{
+        type:Number,
+        reuired:true ,
+    }
 },
 {   
     timestamps:true ,

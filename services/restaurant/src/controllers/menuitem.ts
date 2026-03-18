@@ -64,7 +64,7 @@ export const addMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
 }) ;
 
 export const getAllItems = TryCatch(async(req:AuthenticatedRequest , res)=>{
-    const{id} = req.body ;
+    const{id} = req.params ;
 
     if(!id){
         return res.status(400).json({
@@ -150,11 +150,11 @@ export const toggleMenuItemAvailability = TryCatch(async(req:AuthenticatedReques
         });
     }
 
-    item.isAvailabe = !item.isAvailabe ;
+    item.isAvailable = !item.isAvailable ;
     await item.save() ;
 
     res.json({
-        message : `Item marked as ${item.isAvailabe ? "available" : "unavailable"}` ,
+        message : `Item marked as ${item.isAvailable ? "available" : "unavailable"}` ,
         item,
     });
 });
