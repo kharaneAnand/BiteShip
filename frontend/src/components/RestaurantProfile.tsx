@@ -84,9 +84,6 @@ return (
     }
 
     <div className="p-6 space-y-5">
-
-      {
-        isSeller && (
           <div className="flex items-start justify-between">
             <div className="flex-1">
 
@@ -113,15 +110,16 @@ return (
 
             </div>
 
-            <button
-              onClick={() => setEditMode(!editMode)}
-              className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
-            >
-              <BiEdit size={18} />
-            </button>
+            { isSeller && ( 
+              <button
+                onClick={() => setEditMode(!editMode)}
+                className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+              >
+                <BiEdit size={18} />
+              </button>
+            )}
           </div>
-        )
-      }
+           
 
       {
         editMode ? (
