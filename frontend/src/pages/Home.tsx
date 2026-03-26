@@ -30,10 +30,10 @@ const Home = () => {
   };
 
   const fetchRestaurants = async()=>{
-    if(!location?.latitude || location?.longitude){
-      setLoading(false);
-      return ;
-    }
+   if(location?.latitude == null || location?.longitude == null){
+    setLoading(false);
+     return;
+  }
 
     try {
       setLoading(true) ;
@@ -50,7 +50,7 @@ const Home = () => {
           },
         });
 
-        setRestaurant(data.restaurant ?? []) ;
+        setRestaurant(data.restaurants ?? []) ;
     } catch (error) {
       console.log(error) ;
     }finally{

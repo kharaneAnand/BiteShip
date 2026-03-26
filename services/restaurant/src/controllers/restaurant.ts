@@ -183,8 +183,8 @@ export const getNearbyRestaurant = TryCatch(async(req , res) =>{
    }
 
    const query : any = {
-      isVerified : true 
-   }
+    
+   };
 
    if(search && typeof search === 'string'){
       query.name = {$regex : search , $options:"i"} ;
@@ -213,7 +213,7 @@ export const getNearbyRestaurant = TryCatch(async(req , res) =>{
       {
          $addFields:{
             distancekm : {
-               $round:[{$divde:["$distance" , 1000]} , 2] ,
+               $round:[{$divide:["$distance" , 1000]} , 2] ,
             },
          },
       },
