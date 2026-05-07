@@ -5,10 +5,14 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from 'react-icons/fc';
+import { useAppData } from '../context/AppContext';
 
 const Login = () =>{
     const [loading , setLoading] = useState(false)
     const navigate = useNavigate() ;
+
+
+    const {setUser , setIsAuth} = useAppData() ;
 
     const responseGoogle = async(authresult:any)=>{
         setLoading(true) 
@@ -21,6 +25,8 @@ const Login = () =>{
             localStorage.setItem("token" , result.data.token) ;
             toast.success(result.data.message) ;
             setLoading(false) ;
+            setUser(result.data.user) ;
+            setIsAuth(true) ;
             navigate("/") ;
 
         } catch (error) {
