@@ -106,3 +106,61 @@ export const fetchMyRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=
 
     res.json({restaurant}) ;
 });
+
+export const updateStatusRestauarnt = TryCatch(async(req:AuthenticatedRequest , res)=>{
+
+        if(!req.user){
+            return res.status(403).json({
+                message : "Please Login " 
+            }) ;
+        }
+
+        const {status} = req.body ;
+
+        if(typeof status !== 'boolean'){
+            return res.status(400).json({
+                message : "Status Must be boolean" ,
+            });
+        }
+
+        const restaurant = await Restaurant.findOneAndUpdate({
+            ownerId : req.user._id ,
+        } , {isOpen : status} , {new:true}) ;
+
+        if(!restaurant){
+            return res.status(404).json({
+                message: "Restaurant not found " ,
+            });
+        }
+
+        res.json({
+            message : "Restaurant Status Updated " ,
+            restaurant ,
+        });
+});
+
+export const updateRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=>{
+     if(!req.user){
+        return res.status(403).json({
+            message : "Please Login" ,
+        });
+     }
+
+     const {name , description } = req.body ;
+
+     const restaurant = await Restaurant.findOneAndUpdate(
+        {ownerId : req.user._id},
+        {name : name , description : description},
+        {new : true} 
+     );
+
+     if(!restaurant){
+        return res.json({
+            message : "Restauerant is not found" ,
+        });
+     }
+
+     res.json({
+        message : "Restaurant Updated" ,
+     });
+});
