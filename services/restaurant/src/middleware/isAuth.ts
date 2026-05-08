@@ -4,10 +4,10 @@ import jwt ,{JwtPayload} from 'jsonwebtoken'
 
 export interface IUser{
     _id : string ;
-    name : String ;
-    email : String ;
-    image : String ;
-    role : String ;
+    name : string ;
+    email : string ;
+    image : string ;
+    role : string ;
     restaurantId : string ;
 }
 
