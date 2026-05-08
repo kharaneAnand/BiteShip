@@ -43,7 +43,7 @@ const schema = new Schema<Irestaurant>({
     autoLocation:{
         type:{
             type:String ,
-            enum:["Points"] ,
+            enum:["Point"] ,
             required:true ,
         },
         coordinates:{

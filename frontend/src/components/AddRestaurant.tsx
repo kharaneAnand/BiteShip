@@ -124,4 +124,4 @@ const AddRestaurant = ({fetchMyRestaurant}:props) => {
 );
 };
 
-export default AddRestaurant
+export default AddRestaurant ;
