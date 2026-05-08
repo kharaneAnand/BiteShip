@@ -84,7 +84,7 @@ export const fetchMyRestaurant = TryCatch(async(req:AuthenticatedRequest , res)=
 
     if(!restaurant){
         return res.status(400).json({
-            message : "Invalid User" ,
+            message : "No restaurant Found" ,
         });
     }
 
