@@ -27,7 +27,7 @@ export const addMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
     if(!name || !price){
         return res.status(400).json({
-            messsage : "Name and Price are not required " ,
+            message : "Name and Price are not required " ,
         });
     }
 
@@ -35,7 +35,7 @@ export const addMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
     if(!file){
         return res.status(400).json({
-            message : "Please give image of the Restaurant" ,
+            message : "Please provide item image " ,
         });
     }
 
@@ -64,5 +64,18 @@ export const addMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
         item , 
     });
    
+});
+
+export const getAllItems = TryCatch(async(req:AuthenticatedRequest , res)=>{
+
+    const {id} = req.params ;
+    if(!id){
+       return  res.status(400).json({
+            message : "Id is required" ,
+        });
+    }
+
+    const items = await MenuItems.find({restaurantId : id})
+    res.json(items) ;
 });
 
