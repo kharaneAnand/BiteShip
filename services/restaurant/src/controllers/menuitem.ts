@@ -7,35 +7,31 @@ import MenuItems from "../models/MenuItems.js";
 
 
 export const addMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
-   if(!req.user){
-        return res.status(401).json({
-            message : "Please Login" ,
+    if(!req.user){
+        return res.status(400).json({
+            message: " Please login " ,
         });
     }
-    const restaurant = await Restaurant.findOne(
-    {
-         ownerId : req.user._id
-    }) ;
 
+    const restaurant = await Restaurant.findOne({ownerId: req.user._id}) ;
     if(!restaurant){
         return res.status(404).json({
-            message :"Restaurant not found " ,
+            message:"No Restaurant Found " ,
         });
     }
 
     const {name , description , price} = req.body ;
-
     if(!name || !price){
         return res.status(400).json({
-            message : "Name and Price are not required " ,
+            message : "Name & Price are Required" ,
         });
-    }
+    } 
 
     const file = req.file ;
 
     if(!file){
         return res.status(400).json({
-            message : "Please provide item image " ,
+            message : "Please give the Image" ,
         });
     }
 
@@ -43,39 +39,41 @@ export const addMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
     if(!fileBuffer?.content){
         return res.status(500).json({
-            message : "Failed to create a File Buffer " ,
+            message : "Failed to create a File Buffer" ,
         });
     }
 
-    const {data : uploadResult } = await axios.post(`${process.env.UTILS_SERVICE}/api/upload`,{
-        buffer : fileBuffer.content , 
-    });
+    const {data : uploadResult} = await axios.post(`${process.env.UTILS_SERVICE}/api/upload`,
+        {
+            buffer : fileBuffer.content ,
+        }
+    );
 
-    const item = await MenuItems.create({
-        name ,
-        description ,
-        price , 
-        restaurantId : restaurant._id ,
-        image : uploadResult.url
-    })
+   const item = await MenuItems.create({
+    name ,
+    description ,
+    price ,
+    restaurantId :restaurant._id,
+    image : uploadResult.url,
+   })
 
-    res.json({
-        message : "Item added successfully " ,
-        item , 
-    });
-   
-});
+   res.json({
+    message : "Item added successfully",
+    item ,
+   });
+}) ;
 
 export const getAllItems = TryCatch(async(req:AuthenticatedRequest , res)=>{
+    const{id} = req.params ;
 
-    const {id} = req.params ;
     if(!id){
-       return  res.status(400).json({
-            message : "Id is required" ,
+        return res.status(400).json({
+            message:"Id is Required " ,
         });
     }
 
-    const items = await MenuItems.find({restaurantId : id})
+    const items = await MenuItems.find({restaurantId:id})
+
     res.json(items) ;
 });
 
@@ -89,38 +87,39 @@ export const deleteMenuItem = TryCatch(async(req:AuthenticatedRequest , res)=>{
     const {itemId} = req.params ;
     if(!itemId){
         return res.status(400).json({
-            message: "Id is Required " ,
+            message : "Id is required" ,
         });
     }
 
-    const item = await MenuItems.findById(itemId) 
+    const item = await MenuItems.findById(itemId) ;
 
     if(!item){
         return res.status(404).json({
-            message : "No item Found" ,
+            message : "No item found",
         });
     }
 
     const restaurant = await Restaurant.findOne({
-        _id : item.restaurantId ,
-        ownerId : req.user._id ,
+        _id:item.restaurantId ,
+        ownerId:req.user._id ,
     });
 
     if(!restaurant){
         return res.status(404).json({
-            message:"No restaurant found " ,
+            message:"No restaurant found ",
         });
     }
 
-    await item.deleteOne() ;
+    await item.deleteOne() 
 
     res.json({
-        message : "Item deleted succesfully",
+        message : "Menu item deleted successfully" ,
     });
+
 });
 
 export const toggleMenuItemAvailability = TryCatch(async(req:AuthenticatedRequest , res)=>{
-     if(!req.user){
+    if(!req.user){
         return res.status(401).json({
             message : "Please Login" ,
         });
@@ -129,26 +128,25 @@ export const toggleMenuItemAvailability = TryCatch(async(req:AuthenticatedReques
     const {itemId} = req.params ;
     if(!itemId){
         return res.status(400).json({
-            message: "Id is Required " ,
+            message:"Id is Required" ,
         });
     }
 
-    const item = await MenuItems.findById(itemId) 
-
+    const item = await MenuItems.findById(itemId) ;
     if(!item){
-        return res.status(404).json({
-            message : "No item Found" ,
+        return res.status(400).json({
+            message : "Item is not available" ,
         });
     }
 
-    const restaurant = await Restaurant.findOne({
+    const restaurant = await Restaurant.findById({
         _id : item.restaurantId ,
         ownerId : req.user._id ,
     });
 
     if(!restaurant){
         return res.status(404).json({
-            message:"No restaurant found " ,
+            message : "No restaurant found " ,
         });
     }
 
@@ -156,6 +154,8 @@ export const toggleMenuItemAvailability = TryCatch(async(req:AuthenticatedReques
     await item.save() ;
 
     res.json({
-        message : `Item Marked as ${item.isAvailable?"available" : "unavailable"}`,
+        message : `Item marked as ${item.isAvailable ? "available" : "unavailable"}` ,
+        item,
     });
 });
+

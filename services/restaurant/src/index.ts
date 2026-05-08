@@ -14,7 +14,7 @@ app.use(express.json()) ;
 const PORT = process.env.PORT || 5001 ;
 
 app.use("/api/restaurant" , restaurantRoutes);
-app.use("/api/items" , ItemsRoutes) ;
+app.use("/api/item" , ItemsRoutes) ;
 
 app.listen(PORT , ()=>{
     console.log(`Restaurant service is running on the ${PORT}`) ;
