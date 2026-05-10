@@ -9,6 +9,7 @@ import Navbar from './components/navbar'
 import Accounts from './pages/Accounts'
 import { useAppData } from './context/AppContext'
 import Restaurant from './pages/Restaurant'
+import RestaurantPage from './pages/RestaurantPage'
 
 const App = () => {
 
@@ -28,6 +29,7 @@ const App = () => {
           </Route>
           <Route element={<ProtectedRoute/>}>
              <Route path='/' element={<Home/>}/>
+             <Route path='/restaurant/:id' element={<RestaurantPage/>}/>
              <Route path='/select-role' element={<SelectRole/>}/>
              <Route path='/account' element={<Accounts/>}/>
           </Route>
