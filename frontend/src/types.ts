@@ -22,7 +22,10 @@ export interface AppContextType{
     location : LocationData | null;
     loadingLocation : boolean ;
     city : string ;
-
+    cart : ICart[] | null ;
+    fetchCart:()=>Promise<void>;
+    subTotal : number ;
+    quantity : number ;
 }
 
 export interface IRestaurant{

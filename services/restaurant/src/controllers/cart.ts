@@ -27,7 +27,7 @@ export const addToCart = TryCatch(async(req:AuthenticatedRequest , res)=>{
     });
     if(cartFromDifferentRestaurant){
         return res.status(400).json({
-            messsage :"You can order from only one restaurant at a time . please clear your cart first to add items from this restaurant",
+            message :"You can order from only one restaurant at a time . please clear your cart first to add items from this restaurant",
         });
     }
 
@@ -79,3 +79,4 @@ export const fetchMyCart = TryCatch(async(req:AuthenticatedRequest , res)=>{
         cart:cartItems,
     });
 });
+

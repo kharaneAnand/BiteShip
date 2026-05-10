@@ -7,6 +7,7 @@ import { VscLoading } from "react-icons/vsc";
 import axios from "axios";
 import { restaurantService } from "../main";
 import toast from "react-hot-toast";
+import { useAppData } from "../context/AppContext";
 
 interface MenuItemsProps{
   items : IMenuItem[] ;
@@ -52,13 +53,37 @@ const MenuItems = ({items , onItemDeleted , isSeller} : MenuItemsProps)=>{
         toast.error("Failed to Update Status") ;
       }
   }
+
+  const {fetchCart} = useAppData()
+
+  const addToCart = async(restaurantId:string , itemId:string)=>{
+    try {
+      setLoadingItemId(itemId) 
+
+      const {data} = await axios.post(`${restaurantService}/api/cart/add` ,{
+        restaurantId , itemId
+      },{
+        headers:{
+          Authorization: `Bearer ${localStorage.getItem("token")}` ,
+        },
+      });
+
+      toast.success(data.message) ;
+      fetchCart() ;
+    } catch (error:any) {
+        toast.error(error.response.data.message) ;
+    }finally{
+      setLoadingItemId(null) ;
+    }
+  }
   
  return <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"> 
 {
   items.map((item)=>{
     const isLoading = loadingItemId === item._id  ;
 
-    return <div key={item._id} className={`group relative flex gap-4 rounded-2xl bg-white p-4 shadow-sm border border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${!item.isAvailable ? "opacity-70" : ""}`}>
+    return <div key={item._id} className={`group relative flex gap-4 rounded-2xl bg-white p-4 shadow-sm border border-gray-200 transition-all duration-300
+     hover:shadow-lg hover:-translate-y-1 ${!item.isAvailable ? "opacity-70" : ""}`} >
       
       <div className="relative shrink-0 overflow-hidden rounded-lg">
         <img 
@@ -120,7 +145,7 @@ const MenuItems = ({items , onItemDeleted , isSeller} : MenuItemsProps)=>{
             !isSeller && (
               <button 
                 disabled={!item.isAvailable || isLoading} 
-                onClick={()=>{}} 
+                onClick={()=>addToCart(item.restaurantId , item._id)} 
                 className={`flex items-center justify-center rounded-lg p-2 transition ${
                   !item.isAvailable || isLoading 
                   ? "cursor-not-allowed text-gray-400" 
