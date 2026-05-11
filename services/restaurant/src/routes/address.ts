@@ -5,7 +5,7 @@ import { addAddress, deleteAddress, getMyAddress } from '../controllers/address.
 
 const router = express.Router() ;
 router.post("/new" ,isAuth , addAddress ) ;
-router.post("/:id" , isAuth , deleteAddress) ;
-router.post("/all" , isAuth , getMyAddress) ;
+router.delete("/:id" , isAuth , deleteAddress) ;
+router.get("/all" , isAuth , getMyAddress) ;
 
 export default router ; 
