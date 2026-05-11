@@ -37,7 +37,11 @@ export const addToCart = TryCatch(async(req:AuthenticatedRequest , res)=>{
             $inc:{quantity : 1},
             $setOnInsert:{userId , restaurantId , itemId},
         },
-        {upsert:true , new : true , setDefaultsOnInsert:true } 
+            {
+                upsert: true,
+                returnDocument: "after",
+                setDefaultsOnInsert: true
+            } 
     );
 
     return res.json({
@@ -61,21 +65,21 @@ export const fetchMyCart = TryCatch(async(req:AuthenticatedRequest , res)=>{
         .populate("itemId")
         .populate("restaurantId");
 
-    let subtotal = 0;
+    let subTotal = 0;
     let cartLength = 0;
 
     for(const cartItem of cartItems){
 
         const item : any = cartItem.itemId;
 
-        subtotal += Number(item.price) * Number(cartItem.quantity);
+        subTotal += Number(item.price) * Number(cartItem.quantity);
         cartLength += Number(cartItem.quantity);
     }
 
     return res.json({
         success:true,
         cartLength,
-        subtotal,
+        subTotal,
         cart:cartItems,
     });
 });
@@ -94,7 +98,7 @@ export const incrementCartItem = TryCatch(async(req:AuthenticatedRequest , res)=
     const cartItem = await Cart.findOneAndUpdate(
         {userId , itemId},
         {$inc:{quantity: 1}} ,
-        {new : true }
+        { returnDocument: "after" }
     );
 
     if(!cartItem){

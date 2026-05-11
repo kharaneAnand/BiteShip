@@ -66,7 +66,7 @@ export const AppProvider = ({children}: AppProviderProps)=>{
     } , []) ;
 
     useEffect(()=>{
-        if(user && user.role !== 'customer'){
+        if(user && user.role === 'customer'){
             fetchCart() ;
         }
     } , [user]);
