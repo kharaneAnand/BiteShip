@@ -14,14 +14,14 @@ export const createRazorpayOrder = async(req:Request , res:Response)=>{
     });
 
       const razorpayOrder = await razorpay.orders.create({
-        amount : data.amount ,
+        amount : data.amount * 100  ,
         currency : "INR" ,
         receipt:orderId ,
     });
 
     res.json({
         razorpayOrderId : razorpayOrder.id ,
-        key: process.env.RAZORPAY_KEY_SECRET ,
+        key: process.env.RAZORPAY_KEY_ID ,
     });
 };
 
