@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
+    "@stripe/stripe-js": "^9.5.0",
     "@tailwindcss/vite": "^4.2.4",
     "axios": "^1.16.0",
     "leaflet": "^1.9.4",
