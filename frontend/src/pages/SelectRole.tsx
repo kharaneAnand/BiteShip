@@ -43,7 +43,7 @@ const SelectRole = () => {
     <div className="absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-pink-200 blur-3xl opacity-35"></div>
 
     {/* Subtle Grid Overlay */}
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:5rem_5rem]"></div>
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[5rem_5rem]"></div>
 
     <div
       className="
