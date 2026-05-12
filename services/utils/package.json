@@ -13,12 +13,17 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "amqplib": "^2.0.1",
+    "axios": "^1.16.0",
     "cloudinary": "^2.10.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "razorpay": "^2.9.6"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.8",
+    "@types/axios": "^0.9.36",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.6",
