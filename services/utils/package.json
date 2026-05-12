@@ -19,7 +19,8 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "stripe": "^22.1.1"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
