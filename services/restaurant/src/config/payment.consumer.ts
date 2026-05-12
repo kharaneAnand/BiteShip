@@ -26,7 +26,7 @@ export const startPaymentConsumer = async()=>{
                     status : "placed" ,
                 },
                 $unset:{
-                    expiresAt:1 ,
+                    expiresAt:"" ,
                 },
             }, {new : true});
 
@@ -43,6 +43,7 @@ export const startPaymentConsumer = async()=>{
             channel.ack(msg) ;
         } catch (error) {
             console.error("❌ Payment consumer error " , error ) ;
+            channel.ack(msg)
         }
     })
 };
