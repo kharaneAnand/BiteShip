@@ -125,6 +125,7 @@ const CheckOut = () => {
 
             toast.success("payment successfull 🎉") ;
             navigate('/paymentsuccess/' + response.razorpay_payment_id) ;
+           
           } catch (error) {
             toast.error("Payment verification failed") ;
           }

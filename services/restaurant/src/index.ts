@@ -12,7 +12,7 @@ import { startPaymentConsumer } from './config/payment.consumer.js';
 
 dotenv.config() ;
  await connectRabbitMQ();
-startPaymentConsumer() ;
+ await startPaymentConsumer() ;
 
 const app = express() ;
 app.use(cors()) ;
