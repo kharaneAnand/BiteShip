@@ -14,7 +14,8 @@ import Cart from './pages/Cart'
 import AddAddressPage from './pages/Address'
 import CheckOut from './pages/CheckOut'
 import PaymentSuccess from './pages/PaymentSuccess'
-import OrderSuccess from './pages/ordersuccess'
+import OrderSuccess from './pages/OrderSuccess'
+import Orders from './pages/Orders'
 
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
              <Route path='/' element={<Home/>}/>
              <Route path='/paymentsuccess/:paymentId' element={<PaymentSuccess/>}/>
              <Route path='/ordersuccess' element={<OrderSuccess/>}/>
+             <Route path='/orders' element={<Orders/>}/>
              <Route path='/address' element={<AddAddressPage/>}/>
               <Route path='/checkOut' element={<CheckOut/>}/>
              <Route path='/restaurant/:id' element={<RestaurantPage/>}/>
