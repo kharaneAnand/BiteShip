@@ -301,3 +301,47 @@ export const updateOrderStatus = TryCatch(async(req:AuthenticatedRequest , res)=
     });
   
 });
+
+
+export const getMyOrders = TryCatch(async(req:AuthenticatedRequest , res)=>{
+
+  const user = req.user ;
+
+  if(!user){
+    return res.status(401).json({
+      message : "Unathorized" ,
+     }) ;
+  }
+
+  const orders = await Order.find({
+    userId : user._id.toString() ,
+    paymentStatus:"paid" ,
+  }).sort({createdAt : -1}) ;
+
+  res.json({orders}) ;
+}) ;
+
+export const fetchSingleOrder = TryCatch(async(req:AuthenticatedRequest , res)=>{
+    if(!req.user){
+      return res.status(401).json({
+        message : "Unauthorized" ,
+      });
+    }
+
+    const order = await Order.findById(req.params.id) ;
+
+    if(!order){
+      return res.status(404).json({
+        message : "Order not found" ,
+      });
+    }
+
+    if(order.userId !== req.user._id.toString()){
+      return res.status(401).json({
+        message : "you are not allowed to view this order" ,
+      });
+    }
+
+    res.json(order) ;
+});
+
