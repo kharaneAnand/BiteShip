@@ -4,7 +4,7 @@ export interface IRider extends Document{
     userId : string ;
     picture : string ;
     phoneNumber : string ;
-    addharNumber : string ;
+    aadharNumber : string ;
     drivingLicenseNumber : string ;
     isVerified : boolean ;
     location :{
@@ -32,18 +32,15 @@ const schema = new Schema<IRider>(
         phoneNumber:{
             type:String ,
             required:true ,
-            unique:true ,
             trim:true ,
         },
-        addharNumber:{
+        aadharNumber:{
             type:String ,
             required:true ,
-            unique:true ,
         },
        drivingLicenseNumber:{
             type:String ,
             required:true ,
-            unique:true ,
         },
         isVerified:{
             type:Boolean,
