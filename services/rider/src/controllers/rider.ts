@@ -75,3 +75,78 @@ export const addRiderProfile = TryCatch(async(req:AuthenticatedRequest , res)=>{
     });
 
 });
+
+export const fetchMyProfile = TryCatch(async(req:AuthenticatedRequest , res)=>{
+    const user = req.user ;
+
+    if(!user){
+        return res.status(401).json({
+            message : "Unauthorized" ,
+        });
+    }
+
+    const account = await Rider.findOne({ userId : user._id}) ;
+
+    res.json(account) ;
+});
+
+export const toggleRiderAvailablity = TryCatch(async(req:AuthenticatedRequest , res)=>{
+    const user = req.user ;
+
+    if(!user){
+        return res.status(401).json({
+            message : "Unauthorized" ,
+        });
+    }
+
+    if(user.role !== 'rider'){
+        return res.status(403).json({
+            message : "Only Rider can create a Rider Profile " ,
+        });
+    }
+
+    const { isAvailable , latitude , longitude } = req.body ;
+
+    if(typeof isAvailable !== "boolean"){
+        return res.status(404).json({
+            message : "isAvailable must be boolean" ,
+        });
+    }
+
+    if(latitude === undefined || longitude === undefined) {
+        return res.status(404).json({
+            message : "location is required" ,
+        });
+    }
+
+    const rider = await Rider.findOne({userId : user._id}) ;
+
+    if(!rider){
+        return res.status(404).json({
+            message : "Rider Profile not found " ,
+        });
+    }
+
+    if(isAvailable && !rider.isVerified){
+        return res.status(403).json({
+            message : "Rider is not verified" ,
+        });
+    }
+
+    rider.isAvailable = isAvailable
+
+    rider.location = {
+        type :"Point" ,
+        coordinates:[longitude , latitude] 
+    }
+
+    rider.lastActiveAt = new Date() ;
+
+    await rider.save() ;
+
+    res.json({
+        message : isAvailable? "Rider is now online " : "Rider is now offline" ,
+        rider , 
+    });
+});
+
