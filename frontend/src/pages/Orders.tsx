@@ -172,7 +172,7 @@ const Orders = () => {
             <OrderRow
               key={order._id}
               order={order}
-              onClick={() => navigate(`/order/${order._id}`)}
+              onClick={() => navigate(`/orders/${order._id}`)}
             />
           ))}
         </div>
@@ -226,7 +226,7 @@ const Orders = () => {
             <OrderRow
               key={order._id}
               order={order}
-              onClick={() => navigate(`/order/${order._id}`)}
+              onClick={() => navigate(`/orders/${order._id}`)}
             />
           ))}
         </div>
@@ -339,7 +339,7 @@ const OrderRow = ({
         </p>
       </div>
 
-      <button className="rounded-2xl bg-linear-to-r from-[#2563EB] to-[#3B82F6] px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-lg">
+      <button  className="rounded-2xl bg-linear-to-r from-[#2563EB] to-[#3B82F6] px-5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:shadow-lg">
         View Details
       </button>
 
