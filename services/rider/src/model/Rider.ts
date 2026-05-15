@@ -50,7 +50,7 @@ const schema = new Schema<IRider>(
         location:{
             type:{
                 type:String ,
-                enum:["Points"] ,
+                enum:["Point"] ,
                 default: "Point" ,
             },
             coordinates:{

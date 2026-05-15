@@ -57,13 +57,16 @@ export const addRiderProfile = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
     const riderProfile = await Rider.create({
         userId : user._id ,
-        picture : uploadResult ,
+        picture :  uploadResult.url ,
         phoneNumber ,
         aadharNumber,
         drivingLicenseNumber,
         location:{
             type:"Point" ,
-            coordinates:[longitude , latitude] ,
+           coordinates:[
+                Number(longitude),
+                Number(latitude)
+            ]
         },
         isVerified:false ,
         isAvailable:false ,
