@@ -48,7 +48,7 @@ export const startOrderReadyConsumer = async() =>{
                 console.log(`Notifying rider with userId : ${rider.userId}`) ;
 
                 try {
-                    await axios.post(`${process.env.REALTIME_SERVICE}/api/internal/emit` , {
+                    await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
                         event:"order:available" ,
                         room:`user:${rider.userId}` ,
                         payload : {orderId , restaurantId} ,
@@ -60,7 +60,7 @@ export const startOrderReadyConsumer = async() =>{
 
                     console.log(`Notified rider ${rider.userId} successfully `)
                 } catch (error) {
-                    console.log(`Failed to noify rider ${rider.userId}`) ;
+                    console.log(`Failed to noify rider ${rider.userId}` ) ;
                 }
             }
 

@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppData } from "../context/AppContext";
 import { useSocket } from "../context/SocketContext";
 import axios from "axios";
 import { riderService } from "../main";
 import toast from "react-hot-toast";
 import { BiUpload } from "react-icons/bi";
+import type { Iorder } from "../types";
+import audio from '../assets/rider.mp3'
+import RiderOrderRequest from "../components/RiderOrderRequest";
 
 
  interface IRider {
@@ -26,6 +29,56 @@ const RiderDashboard = () => {
     const [profile , setProfile] = useState<IRider | null>(null) ;
     const [loading , setLoading] = useState(true) ;
     const [toggling , setToggling] = useState(false) ;
+
+
+    const [incomingOrders , setIncomingOrders] = useState<string[]>([]);
+    const [currentoroder , setCurrentOrder] = useState<Iorder | null>(null) ;
+
+    const [audioUnlocked , setAudioLocked] = useState(false) ;
+    const audioRef = useRef<HTMLAudioElement | null>(null) ;
+
+    useEffect(()=>{
+        audioRef.current = new Audio(audio) ;
+        audioRef.current.preload = "auto" ;
+    },[]);
+
+    const unlockAudio = async()=>{
+      try {
+        if(!audioRef.current) return ;
+        await audioRef.current.play() ;
+        audioRef.current.pause() ;
+        audioRef.current.currentTime = 0 ;
+        setAudioLocked(true) ;
+
+        toast.success("sound Enabled") ;
+      } catch (error) {
+        toast.error("Tap again to enable sound") ;
+      }
+    };
+
+    useEffect(()=>{
+        if(!socket) return ;
+
+        const onOrderAvailable = ({orderId} : {orderId : string})=>{
+            setIncomingOrders((prev)=>prev.includes(orderId)? prev:[...prev , orderId]) ;
+
+            if(audioUnlocked && audioRef.current){
+                audioRef.current.currentTime = 0 ;
+                audioRef.current.play().catch(()=>{}) ;
+            }
+            setTimeout(()=>{
+                setIncomingOrders((prev)=>prev.filter((id)=>id !==orderId));
+            },10000) ;
+        };
+
+        socket.on("order:available" , onOrderAvailable) ;
+
+        return()=>{
+            socket.off("order:available" , onOrderAvailable) ;
+        };
+    },[socket , audioUnlocked]) ;
+
+    
 
     const fetchProfile = async()=>{
         try {
@@ -53,6 +106,24 @@ const RiderDashboard = () => {
         }
     } , [user]) ;
 
+    const fetchCurrentOrder = async() =>{
+        try {
+            const {data} = await axios.get(`${riderService}/api/rider/order/current` , {
+                headers:{
+                    Authorization:`Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            setCurrentOrder(data.order) ;
+        } catch (error) {
+            console.log(error) ;
+            setCurrentOrder(null) ;
+        }
+    };
+
+
+    useEffect(()=>{
+        fetchCurrentOrder() ;
+    },[]) ;
 
    const toggleAvailiablity = async () => {
     if (!navigator.geolocation) {
@@ -310,127 +381,255 @@ const RiderDashboard = () => {
     </div>
 )
 
-  return (
-   <div className="space-y-6">
-  <div className="mx-auto max-w-md px-4 py-6">
+ return (
+  <div className="space-y-8">
 
-    <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="mx-auto max-w-md px-4 py-6">
 
-      {/* Background Glow */}
-      <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-red-100 opacity-40 blur-3xl"></div>
-      <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-blue-100 opacity-30 blur-3xl"></div>
+      <div className="relative overflow-hidden rounded-4xl border border-gray-200 bg-white p-6 shadow-sm">
 
-      <div className="relative space-y-6">
+        {/* Background Glow */}
+        <div className="absolute -right-14 -top-14 h-52 w-52 rounded-full bg-blue-100/50 blur-3xl"></div>
+        <div className="absolute -bottom-16 -left-16 h-52 w-52 rounded-full bg-cyan-100/40 blur-3xl"></div>
 
-        {/* Profile Section */}
-        <div className="flex flex-col items-center text-center">
+        {/* Top Accent */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-[#1E3A8A] via-[#2563EB] to-[#3B82F6]"></div>
 
-          <div className="relative">
+        <div className="relative space-y-7">
 
-            <img
-              src={profile.picture}
-              className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-xl"
-              alt="image"
-            />
+          {/* Profile Section */}
+          <div className="flex flex-col items-center text-center">
+
+            <div className="relative">
+
+              {/* Ring Glow */}
+              <div className="absolute inset-0 rounded-full bg-blue-200/40 blur-xl"></div>
+
+              <img
+                src={profile.picture}
+                className="relative h-28 w-28 rounded-full border-4 border-white object-cover shadow-2xl"
+                alt="image"
+              />
+
+              {/* Online Indicator */}
+              <div
+                className={`absolute bottom-1 right-1 h-5 w-5 rounded-full border-[3px] border-white shadow-md
+                ${profile.isAvailable ? "bg-green-500" : "bg-gray-400"}`}
+              ></div>
+
+            </div>
+
+            <h2 className="mt-5 text-2xl font-bold tracking-tight text-gray-900">
+              {user?.name}
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              {profile.phoneNumber}
+            </p>
+
+          </div>
+
+          {/* Stats / Badges */}
+          <div className="grid grid-cols-2 gap-3">
 
             <div
-              className={`absolute bottom-1 right-1 h-5 w-5 rounded-full border-2 border-white
-              ${profile.isAvailable ? "bg-green-500" : "bg-gray-400"}`}
-            ></div>
-
-          </div>
-
-          <h2 className="mt-4 text-2xl font-bold text-gray-900">
-            {user?.name}
-          </h2>
-
-          <p className="mt-1 text-sm text-gray-500">
-            {profile.phoneNumber}
-          </p>
-
-        </div>
-
-        {/* Status Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-3">
-
-          <span
-            className={`rounded-full px-4 py-2 text-xs font-semibold shadow-sm
-            ${
-              profile.isVerified
-                ? "bg-green-100 text-green-700"
-                : "bg-yellow-100 text-yellow-700"
-            }`}
-          >
-            {profile.isVerified ? "Verified Rider" : "Verification Pending"}
-          </span>
-
-          <span
-            className={`rounded-full px-4 py-2 text-xs font-semibold shadow-sm
-            ${
-              profile.isAvailable
-                ? "bg-blue-100 text-blue-700"
-                : "bg-gray-100 text-gray-600"
-            }`}
-          >
-            {profile.isAvailable ? "Online" : "Offline"}
-          </span>
-
-        </div>
-
-        {/* Info Box */}
-        <div className="rounded-2xl border border-blue-100 bg-blue-50/80 p-4">
-
-          <div className="flex items-start gap-3">
-
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-lg">
-              📍
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-blue-900">
-                Hotspot Requirement
-              </p>
-
-              <p className="mt-1 text-sm leading-relaxed text-blue-700">
-                Please stay within a <span className="font-semibold">1.5km radius</span> of any restaurant hotspot before going online to receive orders.
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* Availability Button */}
-        {
-          profile.isVerified && (
-            <button
-              onClick={toggleAvailiablity}
-              disabled={toggling}
-              className={`w-full rounded-2xl py-3.5 text-sm font-semibold text-white shadow-md transition-all duration-300
+              className={`rounded-2xl border p-4 text-center shadow-sm
               ${
-                toggling
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : profile.isAvailable
-                  ? "bg-gray-800 hover:bg-black hover:shadow-xl"
-                  : "bg-linear-to-r from-[#E23744] to-[#ff5964] hover:shadow-xl hover:scale-[1.01]"
+                profile.isVerified
+                  ? "border-green-100 bg-green-50"
+                  : "border-yellow-100 bg-yellow-50"
               }`}
             >
-              {toggling
-                ? "Updating..."
-                : profile.isAvailable
-                ? "Go Offline"
-                : "Go Online"}
-            </button>
-          )
-        }
+              <p className="text-xs font-medium text-gray-500">
+                Verification
+              </p>
+
+              <p
+                className={`mt-1 text-sm font-bold
+                ${
+                  profile.isVerified
+                    ? "text-green-700"
+                    : "text-yellow-700"
+                }`}
+              >
+                {profile.isVerified
+                  ? "Verified"
+                  : "Pending"}
+              </p>
+            </div>
+
+            <div
+              className={`rounded-2xl border p-4 text-center shadow-sm
+              ${
+                profile.isAvailable
+                  ? "border-blue-100 bg-blue-50"
+                  : "border-gray-200 bg-gray-50"
+              }`}
+            >
+              <p className="text-xs font-medium text-gray-500">
+                Availability
+              </p>
+
+              <p
+                className={`mt-1 text-sm font-bold
+                ${
+                  profile.isAvailable
+                    ? "text-[#2563EB]"
+                    : "text-gray-600"
+                }`}
+              >
+                {profile.isAvailable
+                  ? "Online"
+                  : "Offline"}
+              </p>
+            </div>
+
+          </div>
+
+          {/* Info Box */}
+          <div className="rounded-3xl border border-blue-100 bg-linear-to-r from-blue-50 to-cyan-50 p-5 shadow-sm">
+
+            <div className="flex items-start gap-4">
+
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-r from-[#1E3A8A] to-[#3B82F6] text-xl text-white shadow-md">
+                📍
+              </div>
+
+              <div>
+                <p className="text-sm font-bold text-[#1E3A8A]">
+                  Hotspot Requirement
+                </p>
+
+                <p className="mt-2 text-sm leading-relaxed text-blue-800/80">
+                  Stay within a{" "}
+                  <span className="font-semibold">
+                    1.5km radius
+                  </span>{" "}
+                  of any restaurant hotspot before going online to receive new delivery requests.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Availability Button */}
+          {
+            profile.isVerified && !currentoroder && (
+              <button
+                onClick={toggleAvailiablity}
+                disabled={toggling}
+                className={`w-full rounded-2xl py-3.5 text-sm font-semibold text-white shadow-lg transition-all duration-300
+                ${
+                  toggling
+                    ? "cursor-not-allowed bg-gray-400"
+                    : profile.isAvailable
+                    ? "bg-gray-900 hover:bg-black hover:shadow-2xl"
+                    : "bg-linear-to-r from-[#1E3A8A] to-[#3B82F6] hover:scale-[1.02] hover:shadow-2xl"
+                }`}
+              >
+                {toggling
+                  ? "Updating..."
+                  : profile.isAvailable
+                  ? "Go Offline"
+                  : "Go Online"}
+              </button>
+            )
+          }
+
+        </div>
 
       </div>
 
     </div>
 
+    {/* Sound Notification */}
+    {
+      !audioUnlocked && (
+        <div className="relative overflow-hidden rounded-4xl border border-blue-200 bg-linear-to-r from-blue-50 via-white to-cyan-50 p-6 shadow-sm">
+
+          {/* Glow */}
+          <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-blue-200/40 blur-3xl"></div>
+          <div className="absolute -right-10 -bottom-10 h-40 w-40 rounded-full bg-cyan-200/40 blur-3xl"></div>
+
+          <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+
+            <div className="flex items-center gap-4">
+
+              <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-linear-to-r from-[#1E3A8A] to-[#3B82F6] text-3xl text-white shadow-xl">
+                🔔
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">
+                  Enable Sound Notifications
+                </h3>
+
+                <p className="mt-1 text-sm text-gray-600">
+                  Stay updated instantly whenever a new order arrives.
+                </p>
+              </div>
+
+            </div>
+
+            <button
+              onClick={unlockAudio}
+              className="rounded-2xl bg-linear-to-r from-[#1E3A8A] to-[#3B82F6] px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
+            >
+              Enable Sound
+            </button>
+
+          </div>
+
+        </div>
+      )
+    }
+
+    {/* Incoming Orders */}
+    {
+      profile.isAvailable && incomingOrders.length > 0 && (
+
+        <div className="mx-auto max-w-md px-4 space-y-4">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Incoming Orders
+              </h3>
+
+              <p className="text-sm text-gray-500">
+                New delivery requests near you
+              </p>
+            </div>
+
+            <div className="rounded-full bg-blue-100 px-4 py-1.5 text-xs font-bold text-[#2563EB] shadow-sm">
+              {incomingOrders.length} New
+            </div>
+
+          </div>
+
+          <div className="space-y-4">
+            {
+              incomingOrders.map((id) => (
+                <RiderOrderRequest
+                  key={id}
+                  orderId={id}
+                  onAccpeted={() => {
+                    fetchProfile();
+                    fetchCurrentOrder();
+                  }}
+                />
+              ))
+            }
+          </div>
+
+        </div>
+      )
+    }
+
   </div>
-</div>
-  )
+)
 }
 
 export default RiderDashboard

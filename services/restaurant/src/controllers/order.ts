@@ -374,6 +374,14 @@ export const assignRiderToOrder = TryCatch(async(req:AuthenticatedRequest , res)
 
   const {orderId , riderId , riderName , riderPhone} = req.body ;
 
+  const orderAvailable = await Order.findOne({riderId , status:{$ne :"delivered"}}) 
+  if(orderAvailable){
+    return res.status(400).json({
+      message : "You already have an order" ,
+    });
+  }
+
+
   const order = await Order.findById(orderId) ;
 
   if(order?.riderId !== null){

@@ -52,11 +52,15 @@ const Orders = () => {
     };
 
     socket.on("order:update", onOrderUpdate);
+    socket.on("order:rider_assigned" , onOrderUpdate) ;
 
     return () => {
       socket.off("order:update", onOrderUpdate);
+      socket.off("order:rider_assigned" , onOrderUpdate);
     };
   }, [socket]);
+
+  
 
   if (loading) {
     return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Iorder } from "../types";
 import { ORDER_ACTIONS } from "../utils/orderflow";
 import { restaurantService } from "../main";
@@ -37,13 +37,28 @@ const statusColor = (status: string) => {
 
 const OrderCard = ({ order, onStatusUpdate }: Props) => {
   const [loading, setLoading] = useState(false);
+  const [retryVisible , setRetryVisible] = useState(false) ;
+
 
   const actions = ORDER_ACTIONS[order.status] || [];
+
+  useEffect(()=>{
+    if(order.status !== "ready_for_rider"){
+      setRetryVisible(false) ;
+      return ;
+    }
+
+    const timer = setTimeout(()=>{
+      setRetryVisible(true)
+     , 10000})
+     return ()=> clearTimeout(timer) 
+  } , [order.status])
+
 
   const updateStatus = async (status: string) => {
     try {
       setLoading(true);
-
+      setRetryVisible(false) ;
       await axios.put(
         `${restaurantService}/api/order/${order._id}`,
         { status },
@@ -184,6 +199,36 @@ const OrderCard = ({ order, onStatusUpdate }: Props) => {
 
     </div>
 
+   {order.status === "ready_for_rider" && retryVisible && (
+
+  <div className="relative overflow-hidden rounded-2xl border border-blue-200 bg-linear-to-r from-blue-50 via-white to-cyan-50 p-4 shadow-sm">
+
+    {/* Glow Effect */}
+    <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-blue-200 opacity-30 blur-2xl"></div>
+
+    <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+      <div>
+        <p className="text-sm font-semibold text-[#2563EB]">
+          Rider not assigned yet
+        </p>
+
+        <p className="mt-1 text-xs text-gray-500">
+          Retry sending this order to nearby riders.
+        </p>
+      </div>
+
+      <button
+        className="rounded-2xl bg-linear-to-r from-[#1E3A8A] to-[#3B82F6] px-5 py-2.5 text-xs font-semibold text-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg disabled:opacity-50"
+        onClick={() => updateStatus("ready_for_rider")}
+      >
+        Retry Ready for Rider
+      </button>
+
+    </div>
+
+  </div>
+)}
   </div>
 )
 };
