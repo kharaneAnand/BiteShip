@@ -6,16 +6,12 @@ export const connectRabbitMQ = async()=>{
     const connection = await amqp.connect(process.env.RABBITMQ_URL!);
 
     channel = await connection.createChannel() ;
-    await channel.assertQueue(process.env.PAYMENT_QUEUE! , {
-        durable:true ,
-    });
-
 
     await channel.assertQueue(process.env.RIDER_QUEIE! ,{
         durable:true ,
     });
 
-    console.log("🐇 Connected to RabbitMq(resturant service)") ;
+    console.log("🐇 Connected to RabbitMq(rider service)") ;
 };
 
 export const getChannel = ()=> channel ;
