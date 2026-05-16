@@ -362,3 +362,170 @@ export const fetchSingleOrder = TryCatch(async(req:AuthenticatedRequest , res)=>
     res.json(order) ;
 });
 
+
+// for the rider service to assign a rider :
+export const assignRiderToOrder = TryCatch(async(req:AuthenticatedRequest , res)=>{
+
+  if(req.headers["x-internal-key"] !== process.env.INTERNAL_SERVICE_KEY){
+    return res.status(403).json({
+      message : "Forbidden" ,
+    });
+  }
+
+  const {orderId , riderId , riderName , riderPhone} = req.body ;
+
+  const order = await Order.findById(orderId) ;
+
+  if(order?.riderId !== null){
+    return res.status(400).json({
+      message : "order allready taken " ,
+    });
+  }
+
+  const orderUpdated = await Order.findByIdAndUpdate({_id:orderId , riderId:null} ,{
+    riderId ,
+    riderName ,
+    riderPhone ,
+    status:"rider_assigned" ,
+  },{new : true }) ;
+
+
+   await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
+      event : "order:rider_assigned" ,
+      room :`user:${order.userId}` ,
+      payload : order ,
+    },{
+      headers:{
+        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
+      },
+    });
+
+     await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
+      event : "order:rider_assigned" ,
+      room :`restaurant:${order.restaurantId}` ,
+      payload : order ,
+    },{
+      headers:{
+        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
+      },
+    });
+
+    res.json({
+      message : "Rider assigned sucessfully" ,
+      success:true ,
+      order : orderUpdated ,
+    });
+});
+
+
+export const getCurrentOrderForRider = TryCatch(async(req:AuthenticatedRequest , res)=>{
+
+  if(req.headers["x-internal-key"] !== process.env.INTERNAL_SERVICE_KEY){
+    return res.status(403).json({
+      message : "Forbidden" ,
+    });
+  }
+
+  const {riderId} = req.body
+
+  if(!riderId){
+    return res.status(404).json({
+      message : "Rider id is required" ,
+    });
+  }
+
+  const order = await Order.findOne({
+    riderId,
+    status:{$ne : "delivered"},
+  }).populate("restaurantId") ;
+
+  if(!order){
+      return res.status(404).json({
+        message : "Order not found " ,
+      });
+  }
+
+  res.json(order) ;
+
+});
+
+export const updateOrderStatusRider = TryCatch(async(req:AuthenticatedRequest , res)=>{
+
+  if(req.headers["x-internal-key"] !== process.env.INTERNAL_SERVICE_KEY){
+    return res.status(403).json({
+      message : "Forbidden" ,
+    });
+  }
+
+  const {orderId} = req.body ;
+
+  const order = await Order.findById(orderId) ;
+
+  if(!order){
+    return res.status(404).json({
+      message :"order not found " ,
+    });
+  }
+
+  if(order.status === "rider_assigned"){
+    order.status = "picked_up" ;
+    
+    await order.save() ;
+
+    await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
+      event : "order:rider_assigned" ,
+      room :`restaurant:${order.restaurantId}` ,
+      payload : order ,
+    },{
+      headers:{
+        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
+      },
+    });
+
+    await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
+      event : "order:rider_assigned" ,
+      room :`user:${order.userId}` ,
+      payload : order ,
+    },{
+      headers:{
+        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
+      },
+    });
+
+    return res.json({
+      message : "order updated Successfully" ,
+    });
+  }
+
+  if(order.status === "picked_up"){
+
+     order.status = "delivered" ;
+    
+    await order.save() ;
+
+    await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
+      event : "order:rider_assigned" ,
+      room :`restaurant:${order.restaurantId}` ,
+      payload : order ,
+    },{
+      headers:{
+        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
+      },
+    });
+
+    await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
+      event : "order:rider_assigned" ,
+      room :`user:${order.userId}` ,
+      payload : order ,
+    },{
+      headers:{
+        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
+      },
+    });
+
+    return res.json({
+      message : "order updated Successfully" ,
+    });
+
+  }
+});
