@@ -5,10 +5,10 @@ import toast from "react-hot-toast";
 
 interface Props{
     orderId : string ;
-    onAccpeted:()=>void ;
+    onAccepted:()=>void ;
 }
 
-const RiderOrderRequest = ({orderId , onAccpeted}:Props) => {
+const RiderOrderRequest = ({orderId ,onAccepted}:Props) => {
 
     const [accpeting , setAccepting] = useState(false) ;
     const [secondsLeft , setSecondsLeft] = useState(10) ;
@@ -18,14 +18,14 @@ const RiderOrderRequest = ({orderId , onAccpeted}:Props) => {
             setSecondsLeft((prev)=>{
                 if(prev <= 1){
                     clearInterval(interval);
-                    onAccpeted() ;
+                    onAccepted() ;
                     return 0 ;
                 }
                 return prev-1 ;
             });
         } ,1000);
         return ()=>clearInterval(interval) ;
-    },[onAccpeted]); 
+    },[onAccepted]); 
 
     const acceptOrder = async()=>{
         try {
@@ -36,10 +36,10 @@ const RiderOrderRequest = ({orderId , onAccpeted}:Props) => {
             });
 
             toast.success("order Accepted") ;
-            onAccpeted() ;
+            onAccepted();
         } catch (error:any) {
             toast.error(error.response.data.message);
-            onAccpeted() ;
+            onAccepted() ;
         }finally{
             setAccepting(false) ;
         }

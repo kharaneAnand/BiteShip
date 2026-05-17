@@ -173,11 +173,11 @@ export const acceptOrder = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
     try {
         
-        const {data} = await axios.post(`${process.env.RESTAURANT_SERVICE}/api/order/assign/rider` , {
+        const {data} = await axios.put(`${process.env.RESTAURANT_SERVICE}/api/order/assign/rider` , {
             orderId , 
             riderId : rider._id.toString() ,
             riderUserId : rider.userId ,
-            riderName :rider.picture ,
+            riderName :req.user?.name ,
             riderPhone : rider.phoneNumber ,
         },{
             headers:{
@@ -221,14 +221,14 @@ export const fetchMyCurrentOrder = TryCatch(async(req:AuthenticatedRequest , res
     }
 
     try {
-        const {data} = await axios.get(`{process.env.RESTAURANT_SERVICE}/api/order/current/rider?riderId=${rider._id}` ,{
+        const {data} = await axios.get(`${process.env.RESTAURANT_SERVICE}/api/order/current/rider?riderId=${rider._id}` ,{
             headers:{
                 "x-internal-key": process.env.INTERNAL_SERVICE_KEY ,
             },
         } );
 
         res.json({
-            order:data,
+            order:data.order,
         });
 
     } catch (error : any) {
@@ -259,7 +259,7 @@ export const updateStatus = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
 
     try {
-        const {data} = await axios.put(`{process.env.RESTAURANT_SERVICE}/api/order/update/rider` , {orderId} ,{
+        const {data} = await axios.put(`${process.env.RESTAURANT_SERVICE}/api/order/update/status/rider` , {orderId} ,{
             headers:{
                 "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
             },

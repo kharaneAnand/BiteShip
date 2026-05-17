@@ -372,57 +372,92 @@ export const assignRiderToOrder = TryCatch(async(req:AuthenticatedRequest , res)
     });
   }
 
-  const {orderId , riderId , riderName , riderPhone} = req.body ;
+  try {
 
-  const orderAvailable = await Order.findOne({riderId , status:{$ne :"delivered"}}) 
-  if(orderAvailable){
-    return res.status(400).json({
-      message : "You already have an order" ,
+    const {orderId , riderId , riderName , riderPhone} = req.body ;
+
+    const orderAvailable = await Order.findOne({
+      riderId ,
+      status:{ $in:["rider_assigned" , "picked_up"] }
+    });
+
+    if(orderAvailable){
+      return res.status(400).json({
+        message : "You already have an order" ,
+      });
+    }
+
+    const order = await Order.findById(orderId) ;
+
+    if(!order){
+      return res.status(404).json({
+        message : "Order not found",
+      });
+    }
+
+    if(order.riderId !== null){
+      return res.status(400).json({
+        message : "Order already taken",
+      });
+    }
+
+    const orderUpdated = await Order.findOneAndUpdate(
+      {
+        _id: orderId,
+        riderId: null,
+      },
+      {
+        riderId,
+        riderName,
+        riderPhone,
+        status:"rider_assigned",
+      },
+      { new : true }
+    );
+
+    await axios.post(
+      `${process.env.REALTIME_SERVICE}/api/v1/internal/emit`,
+      {
+        event : "order:rider_assigned",
+        room : `user:${order.userId}`,
+        payload : orderUpdated,
+      },
+      {
+        headers:{
+          "x-internal-key":process.env.INTERNAL_SERVICE_KEY,
+        },
+      }
+    );
+
+    await axios.post(
+      `${process.env.REALTIME_SERVICE}/api/v1/internal/emit`,
+      {
+        event : "order:rider_assigned",
+        room : `restaurant:${order.restaurantId}`,
+        payload : orderUpdated,
+      },
+      {
+        headers:{
+          "x-internal-key":process.env.INTERNAL_SERVICE_KEY,
+        },
+      }
+    );
+
+    return res.json({
+      message : "Rider assigned successfully",
+      success : true,
+      order : orderUpdated,
+    });
+
+  } catch (error:any) {
+
+    console.log("ASSIGN RIDER ERROR:", error.response?.data || error.message);
+
+    return res.status(500).json({
+      message : error.response?.data?.message || "Internal Server Error",
     });
   }
 
-
-  const order = await Order.findById(orderId) ;
-
-  if(order?.riderId !== null){
-    return res.status(400).json({
-      message : "order allready taken " ,
-    });
-  }
-
-  const orderUpdated = await Order.findByIdAndUpdate({_id:orderId , riderId:null} ,{
-    riderId ,
-    riderName ,
-    riderPhone ,
-    status:"rider_assigned" ,
-  },{new : true }) ;
-
-
-   await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
-      event : "order:rider_assigned" ,
-      room :`user:${order.userId}` ,
-      payload : order ,
-    },{
-      headers:{
-        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
-      },
-    });
-
-     await axios.post(`${process.env.REALTIME_SERVICE}/api/v1/internal/emit` , {
-      event : "order:rider_assigned" ,
-      room :`restaurant:${order.restaurantId}` ,
-      payload : order ,
-    },{
-      headers:{
-        "x-internal-key":process.env.INTERNAL_SERVICE_KEY ,
-      },
-    });
-
-    res.json({
-      message : "Rider assigned sucessfully" ,
-      success:true ,
-      order : orderUpdated ,
-    });
 });
 
 
@@ -434,7 +469,7 @@ export const getCurrentOrderForRider = TryCatch(async(req:AuthenticatedRequest ,
     });
   }
 
-  const riderId = req.query ;
+  const riderId = req.query.riderId as string;
 
   if(!riderId){
     return res.status(404).json({
@@ -444,7 +479,7 @@ export const getCurrentOrderForRider = TryCatch(async(req:AuthenticatedRequest ,
 
   const order = await Order.findOne({
     riderId,
-    status:{$ne : "delivered"},
+    status:{ $ne : "delivered" },
   }).populate("restaurantId") ;
 
   if(!order){
@@ -453,7 +488,7 @@ export const getCurrentOrderForRider = TryCatch(async(req:AuthenticatedRequest ,
       });
   }
 
-  res.json(order) ;
+  res.json({order}) ;
 
 });
 

@@ -8,6 +8,8 @@ import { BiUpload } from "react-icons/bi";
 import type { Iorder } from "../types";
 import audio from '../assets/rider.mp3'
 import RiderOrderRequest from "../components/RiderOrderRequest";
+import RiderCurrentOrder from "../components/RiderCurrentOrder";
+
 
 
  interface IRider {
@@ -585,6 +587,20 @@ const RiderDashboard = () => {
       )
     }
 
+    {
+  currentoroder && (
+    <div className="mx-auto max-w-md px-4">
+      <RiderCurrentOrder
+        order={currentoroder}
+        onStatusUpdate={() => {
+          fetchCurrentOrder();
+          fetchProfile();
+        }}
+      />
+    </div>
+  )
+}
+
     {/* Incoming Orders */}
     {
       profile.isAvailable && incomingOrders.length > 0 && (
@@ -615,7 +631,7 @@ const RiderDashboard = () => {
                 <RiderOrderRequest
                   key={id}
                   orderId={id}
-                  onAccpeted={() => {
+                  onAccepted={() => {
                     fetchProfile();
                     fetchCurrentOrder();
                   }}
