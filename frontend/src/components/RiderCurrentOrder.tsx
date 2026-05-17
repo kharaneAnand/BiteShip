@@ -24,7 +24,7 @@ const RiderCurrentOrder = ({order , onStatusUpdate}:Props) => {
         }
     }
  return (
-  <div className="relative overflow-hidden rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+  <div className="relative overflow-hidden rounded-4xl py-5 border border-gray-200 bg-white p-6 shadow-sm">
 
     {/* Background Glow */}
     <div className="absolute -right-14 -top-14 h-44 w-44 rounded-full bg-blue-100/50 blur-3xl"></div>

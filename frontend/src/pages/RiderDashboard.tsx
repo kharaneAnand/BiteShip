@@ -9,6 +9,7 @@ import type { Iorder } from "../types";
 import audio from '../assets/rider.mp3'
 import RiderOrderRequest from "../components/RiderOrderRequest";
 import RiderCurrentOrder from "../components/RiderCurrentOrder";
+import RiderOrderMap from "../components/RiderOrderMap";
 
 
 
@@ -589,7 +590,7 @@ const RiderDashboard = () => {
 
     {
   currentoroder && (
-    <div className="mx-auto max-w-md px-4">
+    <div className="mx-auto max-w-md  px-4">
       <RiderCurrentOrder
         order={currentoroder}
         onStatusUpdate={() => {
@@ -597,6 +598,7 @@ const RiderDashboard = () => {
           fetchProfile();
         }}
       />
+      <RiderOrderMap order={currentoroder} />
     </div>
   )
 }
