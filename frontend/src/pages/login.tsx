@@ -51,7 +51,7 @@ const Login = () =>{
     <div className="absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-pink-200 blur-3xl opacity-30"></div>
 
     {/* Subtle Grid Overlay */}
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:5rem_5rem]"></div>
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-size-[5rem_5rem]"></div>
 
     <div
       className="
@@ -99,7 +99,7 @@ const Login = () =>{
       >
 
         {/* Hover Glow */}
-        <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-gradient-to-r from-red-50 via-transparent to-blue-50"></div>
+        <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-linear-to-r from-red-50 via-transparent to-blue-50"></div>
 
         <FcGoogle
           size={20}
