@@ -7,12 +7,12 @@ import { AppProvider } from './context/AppContext.tsx'
 import 'leaflet/dist/leaflet.css';
 import { SocketProvider } from './context/SocketContext.tsx'
 
-export const authService = "https://biteship-auth.onrender.com";
-export const restaurantService = "http://localhost:5001";
-export const utilsService = "http://localhost:5002";
-export const realtimeService = "http://localhost:5003";
-export const riderService = "http://localhost:5004";
-export const adminService = "http://localhost:5005";
+export const authService = "https://biteship-auth-xa00.onrender.com";
+export const restaurantService = "https://biteship-restaurant.onrender.com";
+export const utilsService = "https://biteship-utils.onrender.com";
+export const realtimeService = "https://biteship-realtime.onrender.com";
+export const riderService = "https://biteship-rider.onrender.com";
+export const adminService = "https://biteship-admin.onrender.com";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
