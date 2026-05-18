@@ -1,38 +1,102 @@
-# BiteShip 🍔⚡
+# BiteShip 🍔🚀
 
-BiteShip is a distributed real-time food delivery platform built using a microservices architecture.
-
-The platform supports:
-- Customer food ordering
-- Restaurant onboarding
-- Rider delivery workflows
-- Real-time order tracking
-- Online payments
-- Event-driven communication
-- Admin verification system
+A scalable production-grade food delivery platform built using microservices architecture, real-time communication, event-driven workflows, and distributed systems principles.
 
 ---
 
-# 🚀 System Architecture
+# Overview
 
-BiteShip follows a microservices-based distributed architecture.
+BiteShip is a full-stack food delivery ecosystem inspired by platforms like:
 
-## Services
+- Swiggy
+- Zomato
+- Uber Eats
+
+The project focuses heavily on:
+
+- Backend engineering
+- System design
+- Distributed systems
+- Real-time architecture
+- Queue-based workflows
+
+---
+
+# Key Features
+
+## Customer Features
+
+- Google OAuth Login
+- Restaurant discovery
+- Geo-based restaurant search
+- Cart management
+- Address management
+- Online payments
+- Live order tracking
+- Order history
+
+---
+
+## Seller Features
+
+- Restaurant onboarding
+- Menu management
+- Restaurant availability control
+- Order processing
+- Real-time order updates
+
+---
+
+## Rider Features
+
+- Rider onboarding
+- Nearby order notifications
+- Live delivery workflows
+- Rider availability management
+- Real-time order handling
+
+---
+
+## Admin Features
+
+- Restaurant verification
+- Rider verification
+- Revenue analytics
+- Platform monitoring
+
+---
+
+# Microservices Architecture
 
 | Service | Responsibility |
 |---|---|
 | Auth Service | Authentication & JWT |
-| Restaurant Service | Restaurants, Menu, Cart, Orders |
-| Rider Service | Rider workflows & delivery lifecycle |
-| Realtime Service | Socket.IO realtime communication |
-| Utils Service | Cloudinary uploads & payment handling |
-| Admin Service | Verification & monitoring |
+| Restaurant Service | Restaurants, carts, orders |
+| Rider Service | Rider operations |
+| Utils Service | Payments & uploads |
+| Realtime Service | Socket.IO events |
+| Admin Service | Verification & analytics |
 
 ---
 
-# ⚙️ Tech Stack
+# System Design Highlights
+
+- Microservices Architecture
+- Event-Driven Communication
+- RabbitMQ Queues
+- Real-Time Socket.IO Architecture
+- GeoSpatial MongoDB Queries
+- JWT Authentication
+- Google OAuth
+- Razorpay Payment Integration
+- Distributed Event Processing
+
+---
+
+# Tech Stack
 
 ## Frontend
+
 - React
 - TypeScript
 - Tailwind CSS
@@ -40,176 +104,154 @@ BiteShip follows a microservices-based distributed architecture.
 - Axios
 - Socket.IO Client
 
+---
+
 ## Backend
+
 - Node.js
 - Express.js
 - TypeScript
 
-## Database
-- MongoDB Atlas
+---
 
-## Realtime & Messaging
-- Socket.IO
+## Database
+
+- MongoDB
+- Mongoose
+
+---
+
+## Messaging & Events
+
 - RabbitMQ
 
+---
+
+## Realtime Communication
+
+- Socket.IO
+
+---
+
 ## Cloud & Infrastructure
+
 - Render
 - AWS EC2
 - Cloudinary
-
-## Payments
-- Razorpay
-- Stripe
+- MongoDB Cloud
 
 ---
 
-# 🔥 Core Features
+# Architecture Flow
 
-# Customer Features
-- Google Authentication
-- Nearby restaurant discovery
-- Search restaurants
-- Cart management
-- Address management
-- Online payment
-- Real-time order tracking
-- Order history
-
-# Restaurant Features
-- Restaurant onboarding
-- Menu management
-- Order lifecycle management
-- Realtime order updates
-
-# Rider Features
-- Rider onboarding
-- Live delivery requests
-- Delivery lifecycle tracking
-- Realtime map tracking
-
-# Admin Features
-- Restaurant verification
-- Rider verification
-- Analytics dashboard
+```txt
+Frontend
+   │
+   ▼
+Microservices
+   │
+   ├── REST APIs
+   ├── RabbitMQ Queues
+   └── Socket.IO Events
+```
 
 ---
 
-# 🧠 System Design Highlights
+# Real-Time Features
 
-## Microservices Architecture
-Each domain is isolated into independent deployable services.
+- Live rider notifications
+- Order tracking
+- Instant delivery updates
+- Rider assignment system
 
-## Event-Driven Communication
-RabbitMQ queues handle:
+---
+
+# Event-Driven Workflows
+
+RabbitMQ powers:
+
 - Payment success events
 - Rider assignment workflows
-- Order ready notifications
+- Async processing
 
-## Realtime Infrastructure
-Socket.IO enables:
-- Live rider updates
-- Live order tracking
-- Instant notifications
+---
 
-## GeoSpatial Queries
-MongoDB GeoJSON indexes are used for:
+# GeoSpatial Features
+
+MongoDB GeoSpatial indexes are used for:
+
 - Nearby restaurant discovery
-- Rider matching
+- Rider allocation
+- Distance calculations
 
 ---
 
-# 🌐 Deployment
+# Deployment
 
-## Backend Services
-Deployed on Render:
-- Auth Service
-- Restaurant Service
-- Rider Service
-- Realtime Service
-- Utils Service
-- Admin Service
-
-## Queue Infrastructure
-RabbitMQ deployed on AWS EC2.
-
-## Media Storage
-Cloudinary CDN used for image storage.
-
-## Frontend Deployment
-Frontend deployment was intentionally skipped in production due to Google OAuth production-origin constraints during development stage.
+| Component | Platform |
+|---|---|
+| Backend Services | Render |
+| RabbitMQ | AWS EC2 |
+| Database | MongoDB Cloud |
+| Media Storage | Cloudinary |
 
 ---
 
-# 🔄 RabbitMQ Queues
+# Frontend Deployment Note
+
+Frontend deployment is currently paused because of Google OAuth CORS restrictions during production deployment.
+
+Backend services are fully deployed and functional.
+
+---
+
+# Project Documentation
+
+Detailed documentation available in:
 
 ```txt
-PAYMENT_QUEUE
-ORDER_READY_QUEUE
-RIDER_QUEUE
+/docs
 ```
 
----
+Includes:
 
-# 📦 Project Structure
-
-```txt
-BiteShip/
-│
-├── frontend/
-│
-├── services/
-│   ├── auth-service/
-│   ├── restaurant-service/
-│   ├── rider-service/
-│   ├── realtime-service/
-│   ├── utils-service/
-│   └── admin-service/
-│
-├── docs/
-│
-└── README.md
-```
+- System Design
+- Deployment Guide
+- Realtime Architecture
+- Security Architecture
+- Database Design
+- Order Lifecycle
+- API Documentation
 
 ---
 
-# 🔐 Authentication
+# Engineering Concepts Demonstrated
 
-- Google OAuth
-- JWT-based authorization
-- Role-based access control
+This project demonstrates:
 
-Supported roles:
-- Customer
-- Seller
-- Rider
-- Admin
-
----
-
-# 📡 Realtime Workflow
-
-1. Restaurant marks order ready
-2. RabbitMQ publishes event
-3. Rider service consumes event
-4. Nearby riders detected
-5. Socket.IO emits realtime request
-6. Rider accepts order
-7. Customer receives live updates
+- Production backend architecture
+- Distributed systems engineering
+- Queue-based communication
+- Real-time systems
+- Scalable database design
+- Event-driven architecture
+- Cloud-native deployment
 
 ---
 
-# 📈 Future Improvements
+# Future Improvements
 
 - Kubernetes deployment
-- Docker containerization
 - Redis caching
+- API Gateway
 - CI/CD pipelines
-- Push notifications
-- AI-based rider allocation
+- Monitoring dashboards
+- AI-based delivery optimization
 
 ---
 
-# 👨‍💻 Author
+# Author
 
-Anand Kharane  
-IIT Jodhpur
+## Anand Kharane
+
+Built as a production-grade backend engineering and system design project for placements and learning distributed systems architecture.
