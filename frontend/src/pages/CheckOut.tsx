@@ -147,7 +147,6 @@ const CheckOut = () => {
   };
 
 
-  const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) 
 
   const payWithStripe = async()=>{
       try {
@@ -161,7 +160,6 @@ const CheckOut = () => {
         const {orderId  } = order 
 
        try {
-        const stripe = await stripePromise;
 
         const {data} = await axios.post(`${utilsService}/api/payment/stripe/create`,{
           orderId
