@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import TryCatch from "../middleware/trycatch.js";
-import {getRestaurantCollection , getRiderCollection} from '../util/collection.js'
+import {getRestaurantCollection , getRiderCollection ,  getOrderCollection} from '../util/collection.js'
 
 
 export const getPendingRestaurant = TryCatch(async(req ,res)=>{
@@ -97,4 +97,81 @@ export const verifyRider = TryCatch(async (req, res) => {
     });
 });
 
+export const getVerifiedRestaurants = TryCatch(async(req , res)=>{
 
+    const restaurants = await (
+        await getRestaurantCollection()
+    ).find({isVerified:true}).toArray();
+
+    const ordersCollection = await getOrderCollection();
+
+    const restaurantsWithStats = await Promise.all(
+
+        restaurants.map(async(restaurant:any)=>{
+
+            const deliveredOrders = await ordersCollection.find({
+                restaurantId: restaurant._id.toString(),
+                status:"delivered",
+                paymentStatus:"paid",
+            }).toArray();
+
+            const totalOrders = deliveredOrders.length;
+
+            const revenue = deliveredOrders.reduce(
+                (acc:any , order:any)=>acc + order.totalAmount ,
+                0
+            );
+
+            return {
+                ...restaurant,
+                totalOrders,
+                revenue,
+            };
+        })
+    );
+
+    res.json({
+        count: restaurantsWithStats.length,
+        restaurants: restaurantsWithStats,
+    });
+});
+
+export const getVerifiedRiders = TryCatch(async(req , res)=>{
+
+    const riders = await (
+        await getRiderCollection()
+    ).find({isVerified:true}).toArray();
+
+    const ordersCollection = await getOrderCollection();
+
+    const ridersWithStats = await Promise.all(
+
+        riders.map(async(rider:any)=>{
+
+            const deliveredOrders = await ordersCollection.find({
+                riderId: rider._id.toString(),
+                status:"delivered",
+                paymentStatus:"paid",
+            }).toArray();
+
+            const completedOrders = deliveredOrders.length;
+
+            const earnings = deliveredOrders.reduce(
+                (acc:any , order:any)=>acc + (order.riderAmount || 0),
+                0
+            );
+
+            return {
+                ...rider,
+                completedOrders,
+                earnings,
+                rating: 4.8,
+            };
+        })
+    );
+
+    res.json({
+        count: ridersWithStats.length,
+        riders: ridersWithStats,
+    });
+});

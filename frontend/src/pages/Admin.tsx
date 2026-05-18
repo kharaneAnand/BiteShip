@@ -3,6 +3,8 @@ import { adminService } from "../main";
 import axios from "axios";
 import AdminRestaurantCard from "../components/AdminRestaurantCard";
 import RiderAdmin from "../components/RiderAdmin";
+import ActiveRestaurantCard from "../components/ActiveRestaurantCard";
+import ActiveRiderCard from "../components/ActiveRiderCard";
 
 
 const Admin = () => {
@@ -11,6 +13,14 @@ const Admin = () => {
     const [rider , setRider] = useState<any[]>([]) ;
     const [loading , setLoading] = useState(true) 
     const [tab , setTab] = useState<"restaurant" | "rider">("restaurant") ;
+    const [verifiedRestaurants , setVerifiedRestaurants] = useState<any[]>([]);
+    const [verifiedRiders , setVerifiedRiders] = useState<any[]>([]);
+
+
+    const totalRevenue = verifiedRestaurants.reduce((acc, restaurant) => acc + (restaurant.revenue || 0),0);
+    const totalOrders = verifiedRestaurants.reduce((acc, restaurant) => acc + (restaurant.totalOrders || 0),0);
+    const onlineRiders = verifiedRiders.filter((rider) => rider.isAvailable).length;
+    const openRestaurants = verifiedRestaurants.filter((restaurant) => restaurant.isOpen).length;
 
     const fetchData = async()=>{
         try {
@@ -27,8 +37,24 @@ const Admin = () => {
                 }
             );
 
-setRider(riderData.riders);
+            const { data: verifiedRestaurantData } = await axios.get(`${adminService}/api/v1/admin/restaurant/verified`,{
+                    headers:{
+                        Authorization:`Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
 
+            const { data: verifiedRiderData } = await axios.get(`${adminService}/api/v1/admin/rider/verified`,{
+                    headers:{
+                        Authorization:`Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
+
+
+            
+            setVerifiedRestaurants(verifiedRestaurantData.restaurants);
+            setVerifiedRiders(verifiedRiderData.riders);
             setRestaurant(data.restaurants) ;  
             setRider(riderData.riders);
         } catch (error) {
@@ -101,6 +127,236 @@ setRider(riderData.riders);
       </div>
 
     </div>
+
+    {/* Platform Analytics */}
+
+<div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+
+  {/* Revenue */}
+  <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+
+    <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-green-100/40 blur-2xl"></div>
+
+    <div className="relative">
+
+      <div className="flex items-center justify-between">
+
+        <div>
+          <p className="text-sm font-medium text-gray-500">
+            Total Revenue
+          </p>
+
+          <h3 className="mt-2 text-3xl font-bold text-gray-900">
+            ₹ {totalRevenue}
+          </h3>
+        </div>
+
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-2xl">
+          💰
+        </div>
+
+      </div>
+
+      <p className="mt-4 text-xs text-green-600 font-semibold">
+        Platform earnings from delivered orders
+      </p>
+
+    </div>
+
+  </div>
+
+  {/* Orders */}
+  <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+
+    <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-blue-100/40 blur-2xl"></div>
+
+    <div className="relative">
+
+      <div className="flex items-center justify-between">
+
+        <div>
+          <p className="text-sm font-medium text-gray-500">
+            Total Orders
+          </p>
+
+          <h3 className="mt-2 text-3xl font-bold text-gray-900">
+            {totalOrders}
+          </h3>
+        </div>
+
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-2xl">
+          📦
+        </div>
+
+      </div>
+
+      <p className="mt-4 text-xs text-blue-600 font-semibold">
+        Successfully delivered orders
+      </p>
+
+    </div>
+
+  </div>
+
+  {/* Active Restaurants */}
+  <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+
+    <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-cyan-100/40 blur-2xl"></div>
+
+    <div className="relative">
+
+      <div className="flex items-center justify-between">
+
+        <div>
+          <p className="text-sm font-medium text-gray-500">
+            Open Restaurants
+          </p>
+
+          <h3 className="mt-2 text-3xl font-bold text-gray-900">
+            {openRestaurants}
+          </h3>
+        </div>
+
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-100 text-2xl">
+          🍽️
+        </div>
+
+      </div>
+
+      <p className="mt-4 text-xs text-cyan-600 font-semibold">
+        Restaurants currently accepting orders
+      </p>
+
+    </div>
+
+  </div>
+
+  {/* Riders */}
+  <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+
+    <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-indigo-100/40 blur-2xl"></div>
+
+    <div className="relative">
+
+      <div className="flex items-center justify-between">
+
+        <div>
+          <p className="text-sm font-medium text-gray-500">
+            Online Riders
+          </p>
+
+          <h3 className="mt-2 text-3xl font-bold text-gray-900">
+            {onlineRiders}
+          </h3>
+        </div>
+
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-2xl">
+          🚴
+        </div>
+
+      </div>
+
+      <p className="mt-4 text-xs text-indigo-600 font-semibold">
+        Riders currently available for delivery
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+{/* Recent Activity */}
+
+<div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+
+  <div className="flex items-center justify-between">
+
+    <div>
+      <h2 className="text-2xl font-bold text-gray-900">
+        Recent Activity
+      </h2>
+
+      <p className="mt-1 text-sm text-gray-500">
+        Latest platform actions & approvals
+      </p>
+    </div>
+
+    <div className="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700">
+      Live Feed
+    </div>
+
+  </div>
+
+  <div className="mt-6 space-y-4">
+
+    {
+      verifiedRestaurants.slice(0,3).map((restaurant)=>(
+        <div
+          key={restaurant._id}
+          className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4 transition hover:bg-gray-50"
+        >
+
+          <img
+            src={restaurant.image}
+            className="h-14 w-14 rounded-2xl object-cover"
+          />
+
+          <div className="flex-1">
+
+            <h4 className="font-semibold text-gray-900">
+              {restaurant.name}
+            </h4>
+
+            <p className="text-sm text-gray-500">
+              Restaurant verified successfully
+            </p>
+
+          </div>
+
+          <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+            Approved
+          </div>
+
+        </div>
+      ))
+    }
+
+    {
+      verifiedRiders.slice(0,2).map((rider)=>(
+        <div
+          key={rider._id}
+          className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4 transition hover:bg-gray-50"
+        >
+
+          <img
+            src={rider.picture}
+            className="h-14 w-14 rounded-2xl object-cover"
+          />
+
+          <div className="flex-1">
+
+            <h4 className="font-semibold text-gray-900">
+              Delivery Partner
+            </h4>
+
+            <p className="text-sm text-gray-500">
+              Rider joined delivery network
+            </p>
+
+          </div>
+
+          <div className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-700">
+            Active
+          </div>
+
+        </div>
+      ))
+    }
+
+  </div>
+
+</div>
 
     {/* Tabs */}
     <div className="flex flex-wrap gap-4">
@@ -193,6 +449,43 @@ setRider(riderData.riders);
             )
           }
 
+          {/* Active Restaurants */}
+
+            <div className="space-y-5 pt-10">
+
+            <div className="flex items-center justify-between">
+
+                <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                    Active Restaurants
+                </h2>
+
+                <p className="mt-1 text-sm text-gray-500">
+                    Verified restaurant partners on platform.
+                </p>
+                </div>
+
+                <div className="rounded-full bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 shadow-sm">
+                {verifiedRestaurants.length} Active
+                </div>
+
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+
+                {
+                verifiedRestaurants.map((restaurant)=>(
+                    <ActiveRestaurantCard
+                    key={restaurant._id}
+                    restaurant={restaurant}
+                    />
+                ))
+                }
+
+            </div>
+
+            </div>
+
         </div>
       )
     }
@@ -259,9 +552,47 @@ setRider(riderData.riders);
             )
           }
 
+          {/* Active Riders */}
+
+            <div className="space-y-5 pt-10">
+
+            <div className="flex items-center justify-between">
+
+                <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                    Active Riders
+                </h2>
+
+                <p className="mt-1 text-sm text-gray-500">
+                    Verified delivery riders currently on platform.
+                </p>
+                </div>
+
+                <div className="rounded-full bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 shadow-sm">
+                {verifiedRiders.length} Active
+                </div>
+
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+
+                {
+                verifiedRiders.map((rider)=>(
+                    <ActiveRiderCard
+                    key={rider._id}
+                    rider={rider}
+                    />
+                ))
+                }
+
+            </div>
+
+            </div>
+
         </div>
       )
     }
+
 
   </div>
 )

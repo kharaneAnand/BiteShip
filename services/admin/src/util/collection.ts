@@ -11,3 +11,9 @@ export const getRiderCollection = async()=>{
 
     return db.collection("riders") ;
 }
+
+export const getOrderCollection = async()=>{
+    const db = await connectDB()
+
+    return db.collection("orders");
+}
