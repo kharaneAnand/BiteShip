@@ -1,79 +1,36 @@
-# BiteShip 🍔🚀
+# BiteShip 🍔⚡
 
-BiteShip is a full-stack real-time food delivery platform built using a microservices architecture.
+BiteShip is a distributed real-time food delivery platform built using a microservices architecture.
 
 The platform supports:
 - Customer food ordering
-- Restaurant management
-- Rider delivery system
-- Real-time order tracking
-- Payment integration
-- Admin verification workflows
-- Event-driven communication using RabbitMQ
-
----
-
-# 🌐 Live Deployment
-
-## Frontend
-https://bite-ship-qdam-icw3y8z0c-anand-kharane-s-projects.vercel.app
-
-## Microservices
-- Auth Service
-- Restaurant Service
-- Rider Service
-- Realtime Service
-- Utils Service
-- Admin Service
-
----
-
-# 🏗️ System Architecture
-
-Frontend communicates with multiple backend microservices.
-
-Services communicate internally using:
-- REST APIs
-- RabbitMQ event queues
-- Socket.IO realtime communication
-
----
-
-# ⚡ Features
-
-## Customer
-- Google Authentication
-- Browse nearby restaurants
-- Search restaurants
-- Add items to cart
-- Address management
-- Online payments
-- Real-time order tracking
-- Order history
-
-## Restaurant
 - Restaurant onboarding
-- Menu management
-- Order management
-- Real-time order updates
-- Sales management
-
-## Rider
-- Rider onboarding
-- Live order requests
-- Order acceptance flow
-- Realtime delivery updates
-- Live map tracking
-
-## Admin
-- Verify restaurants
-- Verify riders
-- Monitor active restaurants
-- Monitor active riders
+- Rider delivery workflows
+- Real-time order tracking
+- Online payments
+- Event-driven communication
+- Admin verification system
 
 ---
 
-# 🧠 Tech Stack
+# 🚀 System Architecture
+
+BiteShip follows a microservices-based distributed architecture.
+
+## Services
+
+| Service | Responsibility |
+|---|---|
+| Auth Service | Authentication & JWT |
+| Restaurant Service | Restaurants, Menu, Cart, Orders |
+| Rider Service | Rider workflows & delivery lifecycle |
+| Realtime Service | Socket.IO realtime communication |
+| Utils Service | Cloudinary uploads & payment handling |
+| Admin Service | Verification & monitoring |
+
+---
+
+# ⚙️ Tech Stack
 
 ## Frontend
 - React
@@ -91,15 +48,14 @@ Services communicate internally using:
 ## Database
 - MongoDB Atlas
 
+## Realtime & Messaging
+- Socket.IO
+- RabbitMQ
+
 ## Cloud & Infrastructure
 - Render
-- Vercel
 - AWS EC2
 - Cloudinary
-
-## Messaging & Realtime
-- RabbitMQ
-- Socket.IO
 
 ## Payments
 - Razorpay
@@ -107,101 +63,153 @@ Services communicate internally using:
 
 ---
 
-# 🔥 Microservices
+# 🔥 Core Features
 
-## 1. Auth Service
-Handles:
-- Google OAuth
-- JWT Authentication
-- User role management
+# Customer Features
+- Google Authentication
+- Nearby restaurant discovery
+- Search restaurants
+- Cart management
+- Address management
+- Online payment
+- Real-time order tracking
+- Order history
 
-## 2. Restaurant Service
-Handles:
-- Restaurants
-- Menu items
-- Cart
-- Orders
-- Addresses
+# Restaurant Features
+- Restaurant onboarding
+- Menu management
+- Order lifecycle management
+- Realtime order updates
 
-## 3. Rider Service
-Handles:
+# Rider Features
 - Rider onboarding
-- Rider availability
-- Order delivery lifecycle
+- Live delivery requests
+- Delivery lifecycle tracking
+- Realtime map tracking
 
-## 4. Realtime Service
-Handles:
-- Socket.IO rooms
-- Realtime events
-- Rider/customer updates
-
-## 5. Utils Service
-Handles:
-- Cloudinary uploads
-- Payment processing
-
-## 6. Admin Service
-Handles:
+# Admin Features
 - Restaurant verification
 - Rider verification
-- Analytics
+- Analytics dashboard
 
 ---
 
-# 🔄 Event Driven Architecture
+# 🧠 System Design Highlights
 
-RabbitMQ queues used:
-- PAYMENT_QUEUE
-- ORDER_READY_QUEUE
-- RIDER_QUEUE
+## Microservices Architecture
+Each domain is isolated into independent deployable services.
 
----
+## Event-Driven Communication
+RabbitMQ queues handle:
+- Payment success events
+- Rider assignment workflows
+- Order ready notifications
 
-# 📦 Installation
+## Realtime Infrastructure
+Socket.IO enables:
+- Live rider updates
+- Live order tracking
+- Instant notifications
 
-## Clone Repository
-
-```bash
-git clone <repo-url>
-```
-
-## Install Dependencies
-
-```bash
-npm install
-```
-
-## Setup Environment Variables
-
-Create `.env` files for each service.
+## GeoSpatial Queries
+MongoDB GeoJSON indexes are used for:
+- Nearby restaurant discovery
+- Rider matching
 
 ---
 
-# 🚀 Deployment
-
-## Frontend
-- Vercel
+# 🌐 Deployment
 
 ## Backend Services
-- Render
+Deployed on Render:
+- Auth Service
+- Restaurant Service
+- Rider Service
+- Realtime Service
+- Utils Service
+- Admin Service
 
-## RabbitMQ
-- AWS EC2
+## Queue Infrastructure
+RabbitMQ deployed on AWS EC2.
+
+## Media Storage
+Cloudinary CDN used for image storage.
+
+## Frontend Deployment
+Frontend deployment was intentionally skipped in production due to Google OAuth production-origin constraints during development stage.
 
 ---
 
-# 🧩 Future Improvements
+# 🔄 RabbitMQ Queues
+
+```txt
+PAYMENT_QUEUE
+ORDER_READY_QUEUE
+RIDER_QUEUE
+```
+
+---
+
+# 📦 Project Structure
+
+```txt
+BiteShip/
+│
+├── frontend/
+│
+├── services/
+│   ├── auth-service/
+│   ├── restaurant-service/
+│   ├── rider-service/
+│   ├── realtime-service/
+│   ├── utils-service/
+│   └── admin-service/
+│
+├── docs/
+│
+└── README.md
+```
+
+---
+
+# 🔐 Authentication
+
+- Google OAuth
+- JWT-based authorization
+- Role-based access control
+
+Supported roles:
+- Customer
+- Seller
+- Rider
+- Admin
+
+---
+
+# 📡 Realtime Workflow
+
+1. Restaurant marks order ready
+2. RabbitMQ publishes event
+3. Rider service consumes event
+4. Nearby riders detected
+5. Socket.IO emits realtime request
+6. Rider accepts order
+7. Customer receives live updates
+
+---
+
+# 📈 Future Improvements
 
 - Kubernetes deployment
-- CI/CD pipelines
+- Docker containerization
 - Redis caching
+- CI/CD pipelines
 - Push notifications
-- AI delivery optimization
-- Advanced analytics
+- AI-based rider allocation
 
 ---
 
 # 👨‍💻 Author
 
-Anand Kharane
+Anand Kharane  
 IIT Jodhpur
