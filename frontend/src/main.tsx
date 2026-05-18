@@ -7,7 +7,7 @@ import { AppProvider } from './context/AppContext.tsx'
 import 'leaflet/dist/leaflet.css';
 import { SocketProvider } from './context/SocketContext.tsx'
 
-export const authService = "http://localhost:5000";
+export const authService = "https://biteship-auth.onrender.com";
 export const restaurantService = "http://localhost:5001";
 export const utilsService = "http://localhost:5002";
 export const realtimeService = "http://localhost:5003";

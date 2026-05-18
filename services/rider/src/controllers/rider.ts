@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from "../middleware/isAuth.js";
 import TryCatch from "../middleware/trycatch.js";
 import { Rider } from "../model/Rider.js";
 
+
 export const addRiderProfile = TryCatch(async(req:AuthenticatedRequest , res)=>{
     const user = req.user;
 
@@ -79,6 +80,7 @@ export const addRiderProfile = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
 });
 
+
 export const fetchMyProfile = TryCatch(async(req:AuthenticatedRequest , res)=>{
     const user = req.user ;
 
@@ -92,6 +94,7 @@ export const fetchMyProfile = TryCatch(async(req:AuthenticatedRequest , res)=>{
 
     res.json(account) ;
 });
+
 
 export const toggleRiderAvailablity = TryCatch(async(req:AuthenticatedRequest , res)=>{
     const user = req.user ;
