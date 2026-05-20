@@ -252,6 +252,7 @@ This project demonstrates:
 
 # Author
 
-## Anand Kharane
+## Anand Kharane ( IIT JODHPUR ) 
+
 
 Built as a production-grade backend engineering and system design project for placements and learning distributed systems architecture.
